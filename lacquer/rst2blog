@@ -1,0 +1,84 @@
+#!/usr/bin/env python
+"""Convert a rst document to very raw html, suitable for a blog post.
+
+Usage:
+
+  rst2blog blogpost.rst
+
+It produces output in stdtout, so that it is later convenient to paste it into
+a blogspot raw html window.
+"""
+
+#-----------------------------------------------------------------------------
+# Imports
+#-----------------------------------------------------------------------------
+
+import commands
+import sys
+
+#-----------------------------------------------------------------------------
+# Functions
+#-----------------------------------------------------------------------------
+
+def main(argv = None):
+    """Write to stdout html body of running rst2html on input files.
+
+    Parameters
+    ----------
+    argv : optional, list
+        If given, it should be a list with the structure of sys.argv, if not
+        given the function reads sys.argv directly.  The input filename is
+        argv[1]. 
+    """
+    if argv == None:
+        argv = sys.argv
+
+    # This is the template for the rst2html call that produces the cleanest,
+    # simplest html I could find.  This should help in making it easier to
+    # paste into the blogspot html window, though I'm still having problems
+    # with linebreaks there...
+    cmd_template = ("rst2html --link-stylesheet --no-xml-declaration "
+                    "--no-generator --no-datestamp --no-source-link "
+                    "--no-toc-backlinks --no-section-numbering "
+                    "--strip-comments ")
+
+    # Read output of rst2html on the input file
+    try:
+        fname = argv[1]
+    except IndexError:
+        print >> sys.stderr, __doc__
+        sys.exit(1)
+        
+    cmd = "%s %s" % (cmd_template, fname)
+    html = commands.getoutput(cmd)
+
+    # Make an iterator so breaking out holds state.  Our implementation of
+    # searching for the html body below is basically a trivial little state
+    # machine, so we need this.
+    walker = iter(html.splitlines())
+
+    # Leftover code to write output to a file.  We may turn this on again
+    # sometime in the future...
+    #out_fname = fname.replace('.rst','_blogspot.html')
+    #ostream = open(out_fname,'w')
+    ostream = sys.stdout
+
+    # Find start of main text, break out to then print until we find end /div.
+    # This may only work if there's a real title defined so we get a 'div class'
+    # tag, I haven't really tried.
+    for line in walker:
+        if line.startswith('<div class'):
+            break
+
+    for line in walker:
+        if line.startswith('</div>'):
+            break
+        print >> ostream, line
+
+    # Cleanup - only close normal files, not stdout!
+    if ostream is not sys.stdout:
+        ostream.close()
+
+
+if __name__ == '__main__':
+    main(sys.argv)
