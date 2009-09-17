@@ -13,8 +13,8 @@ a blogspot raw html window.
 # Imports
 #-----------------------------------------------------------------------------
 
-import commands
 import sys
+import subprocess
 
 #-----------------------------------------------------------------------------
 # Functions
@@ -50,7 +50,13 @@ def main(argv = None):
         sys.exit(1)
         
     cmd = "%s %s" % (cmd_template, fname)
-    html = commands.getoutput(cmd)
+    proc = subprocess.Popen(cmd,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE,
+                            shell=True)
+    html, stderr = proc.communicate()
+    if stderr:
+        raise IOError(stderr)
 
     # Make an iterator so breaking out holds state.  Our implementation of
     # searching for the html body below is basically a trivial little state
