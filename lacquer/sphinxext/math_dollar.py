@@ -37,7 +37,6 @@ def process_dollars(app, docname, source):
         _data[t] = s
         return t
     s = re.sub(r"({[^{}$]*\$[^{}$]*\$[^{}]*})", repl, s)
-    
     # matches $...$
     dollars = re.compile(r"(?<!\$)(?<!\\)\$([^\$]+?)\$")
     # regular expression for \$
