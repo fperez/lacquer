@@ -1,5 +1,6 @@
 Copyright (c) 2009, Fernando Perez
 Copyright (c) 2009, Ondrej Certik
+Copyright (c) 2009, Christopher Burns
 
 All rights reserved.
 
