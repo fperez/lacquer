@@ -73,7 +73,7 @@ def main():
     s = re.sub("(?ms)\$\$(.+?)\$\$", repl1, s)
     s = re.sub(r"(?ms)\\begin{equation\*}(.+?)\\end{equation\*}", repl1, s)
     s = re.sub(r"(?ms)(\\begin{eqnarray\*}.+?\\end{eqnarray\*})", repl6, s)
-    s = re.sub(r"(?ms)\\begin{equation}(.+?)\\label{(.+?)}(\s+)\\end{equation}",
+    s = re.sub(r"(?ms)\\begin{equation}(.*?)\\label{(.+?)}(.+?)\\end{equation}",
             repl4, s)
 
     # convert titles:
