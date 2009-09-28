@@ -52,8 +52,17 @@ def main():
         parser.print_help()
         return
 
+    custom_definitions = {
+            r"\\be(?=[^\w])": r"\\begin{equation}",
+            r"\\ee(?=[^\w])": r"\\end{equation}",
+            r"\\ba(?=[^\w])": r"\\begin{array}",
+            r"\\ea(?=[^\w])": r"\\end{array}",
+            }
+
     filename = args[0]
     s = open(filename).read()
+    for pattern in custom_definitions:
+        s = re.sub(pattern, custom_definitions[pattern], s)
     s = re.sub("(?ms)\$\$(.+?)\$\$", repl1, s)
     s = re.sub(r"(?ms)\\begin{equation\*}(.+?)\\end{equation\*}", repl1, s)
     s = re.sub(r"(?ms)(\\begin{eqnarray\*}.+?\\end{eqnarray\*})", repl6, s)
