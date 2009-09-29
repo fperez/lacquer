@@ -35,7 +35,7 @@ def repl4(obj):
     label = obj.group(2)
     eq = eq.replace("\n", " ")
     eq = fill(eq, 100000)
-    return "\n.. math::\n    :label:%s\n\n    %s\n" % (label, eq)
+    return "\n.. math::\n    :label: %s\n\n    %s\n" % (label, eq)
 def repl2(obj):
     title = obj.group(1)
     return "%s\n%s\n" % (title, "="*len(title))
