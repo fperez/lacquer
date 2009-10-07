@@ -10,6 +10,7 @@ setup(name='Lacquer',
     scripts=[
         './lacquer/rst2blog',
         './lacquer/latex2rst',
+        './lacquer/git-fix-patch',
         ]
      )
 

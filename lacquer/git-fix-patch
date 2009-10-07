@@ -1,0 +1,74 @@
+#!/usr/bin/env python
+"""
+Fixes a bogus git patch.
+
+Sometimes a patch that people submit to sympy contains 2 bogus characters at
+the beginning, that cause "git am" to fail when applying it. The solution is to
+remove them, which is the purpose of this script.
+
+Usage:
+
+  git-fix-patch some.patch > some_fixed.patch
+
+you can also rewrite the original file with the fix (inplace) by:
+
+  latex2rst -s some.patch
+
+"""
+
+from textwrap import fill
+import os
+import re
+from optparse import OptionParser
+
+def repl1(obj):
+    eq = obj.group(1)
+    eq = eq.replace("\n", " ")
+    eq = fill(eq, 100000)
+    return "\n.. math::\n\n    %s\n" % eq
+def repl6(obj):
+    eq = obj.group(1)
+    eq = eq.replace("\n", " ")
+    eq = fill(eq, 100000)
+    return "\n.. math::\n    :nowrap:\n\n    %s\n" % eq
+def repl4(obj):
+    eq = obj.group(1)
+    label = obj.group(2)
+    eq = eq.replace("\n", " ")
+    eq = fill(eq, 100000)
+    return "\n.. math::\n    :label: %s\n\n    %s\n" % (label, eq)
+def repl2(obj):
+    title = obj.group(1)
+    return "%s\n%s\n" % (title, "="*len(title))
+def repl3(obj):
+    title = obj.group(1)
+    return "%s\n%s\n" % (title, "-"*len(title))
+
+def main():
+    parser = OptionParser(usage="[options] args")
+    parser.add_option("-s", "--save", dest="save", action="store_true",
+            default=False,
+            help="Rewrite the original file with the fixed patch")
+    options, args = parser.parse_args()
+    if len(args) != 1:
+        parser.print_help()
+        return
+
+    filename = args[0]
+    s = open(filename).read()
+    start = s.find("From")
+    if start > 10:
+        raise Exception("Uknown format of the git patch")
+
+    # strip the bogus characters at the beginning of the file
+    s = s[start:]
+
+    # either save to a file or dump to stdout:
+    if options.save:
+        outfile = filename
+        open(outfile, "w").write(s)
+    else:
+        print s
+
+if __name__ == '__main__':
+    main()
