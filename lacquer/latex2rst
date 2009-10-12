@@ -60,7 +60,13 @@ def main():
         return
 
     # those substitutions will be caried in the order as specified in the list:
-    custom_definitions = [
+    simple_substitutions = [
+            # general substitutions:
+            {
+                r"\\texttt{(.*)}": r"``\1``",
+            },
+
+            # custom substitutions (you might add your own here):
             {
                 r"\\def\\be\{.*\}": r"",
                 r"\\def\\ee\{.*\}": r"",
@@ -78,9 +84,8 @@ def main():
     filename = args[0]
     s = open(filename).read()
 
-    # convert user defined things (you might want to add your own custom
-    # defintions into custom_definitions):
-    for stage in custom_definitions:
+    # apply the simple substitutions
+    for stage in simple_substitutions:
         for pattern in stage:
             s = re.sub(pattern, stage[pattern], s)
 
