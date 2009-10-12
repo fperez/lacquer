@@ -31,8 +31,12 @@ def repl6(obj):
     eq = fill(eq, 100000)
     return "\n.. math::\n    :nowrap:\n\n    %s\n" % eq
 def repl4(obj):
+    # in general, there can be some equation (group 1), then the label (group
+    # 2) and then some more equation text (group 3), so we need to join the
+    # equation text and put the label in front:
     eq = obj.group(1)
     label = obj.group(2)
+    eq += " " + obj.group(3)
     eq = eq.replace("\n", " ")
     eq = fill(eq, 100000)
     return "\n.. math::\n    :label: %s\n\n    %s\n" % (label, eq)
