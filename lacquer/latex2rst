@@ -36,12 +36,19 @@ def repl4(obj):
     eq = eq.replace("\n", " ")
     eq = fill(eq, 100000)
     return "\n.. math::\n    :label: %s\n\n    %s\n" % (label, eq)
-def repl2(obj):
+
+def repl_chapter(obj):
     title = obj.group(1)
     return "%s\n%s\n" % (title, "="*len(title))
-def repl3(obj):
+def repl_section(obj):
     title = obj.group(1)
     return "%s\n%s\n" % (title, "-"*len(title))
+def repl_subsection(obj):
+    title = obj.group(1)
+    return "%s\n%s\n" % (title, "~"*len(title))
+def repl_subsubsection(obj):
+    title = obj.group(1)
+    return "%s\n%s\n" % (title, "^"*len(title))
 
 def main():
     parser = OptionParser(usage="[options] args")
@@ -77,8 +84,10 @@ def main():
             repl4, s)
 
     # convert titles:
-    s = re.sub(r"\\chapter{(.+)}", repl2, s)
-    s = re.sub(r"\\section{(.+)}", repl3, s)
+    s = re.sub(r"\\chapter{(.+)}", repl_chapter, s)
+    s = re.sub(r"\\section\*?{(.+)}", repl_section, s)
+    s = re.sub(r"\\subsection\*?{(.+)}", repl_subsection, s)
+    s = re.sub(r"\\subsubsection\*?{(.+)}", repl_subsubsection, s)
 
     # either save to a file or dump to stdout:
     if options.save:
