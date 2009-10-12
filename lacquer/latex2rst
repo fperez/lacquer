@@ -59,22 +59,30 @@ def main():
         parser.print_help()
         return
 
-    custom_definitions = {
-            r"(?<!\\def)\\be(?=[^\w])": r"\\begin{equation}",
-            r"(?<!\\def)\\ee(?=[^\w])": r"\\end{equation}",
-            r"(?<!\\def)\\ba(?=[^\w])": r"\\begin{array}",
-            r"(?<!\\def)\\ea(?=[^\w])": r"\\end{array}",
-            r"(?ms)\\left\((\\mat{.+?})\\right\)": r"\1",
-            r"\(\\ref{(.+?)}\)": r":eq:`\1`",
-            }
+    # those substitutions will be caried in the order as specified in the list:
+    custom_definitions = [
+            {
+                r"\\def\\be\{.*\}": r"",
+                r"\\def\\ee\{.*\}": r"",
+            },
+            {
+                r"(?<!\\def)\\be(?=[^\w])": r"\\begin{equation}",
+                r"(?<!\\def)\\ee(?=[^\w])": r"\\end{equation}",
+                r"(?<!\\def)\\ba(?=[^\w])": r"\\begin{array}",
+                r"(?<!\\def)\\ea(?=[^\w])": r"\\end{array}",
+                r"(?ms)\\left\((\\mat{.+?})\\right\)": r"\1",
+                r"\(\\ref{(.+?)}\)": r":eq:`\1`",
+            },
+        ]
 
     filename = args[0]
     s = open(filename).read()
 
     # convert user defined things (you might want to add your own custom
     # defintions into custom_definitions):
-    for pattern in custom_definitions:
-        s = re.sub(pattern, custom_definitions[pattern], s)
+    for stage in custom_definitions:
+        for pattern in stage:
+            s = re.sub(pattern, stage[pattern], s)
 
     # convert equations:
     s = re.sub("(?ms)\$\$(.+?)\$\$", repl1, s)
