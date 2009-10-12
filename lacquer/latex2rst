@@ -60,10 +60,10 @@ def main():
         return
 
     custom_definitions = {
-            r"\\be(?=[^\w])": r"\\begin{equation}",
-            r"\\ee(?=[^\w])": r"\\end{equation}",
-            r"\\ba(?=[^\w])": r"\\begin{array}",
-            r"\\ea(?=[^\w])": r"\\end{array}",
+            r"(?<!\\def)\\be(?=[^\w])": r"\\begin{equation}",
+            r"(?<!\\def)\\ee(?=[^\w])": r"\\end{equation}",
+            r"(?<!\\def)\\ba(?=[^\w])": r"\\begin{array}",
+            r"(?<!\\def)\\ea(?=[^\w])": r"\\end{array}",
             r"(?ms)\\left\((\\mat{.+?})\\right\)": r"\1",
             r"\(\\ref{(.+?)}\)": r":eq:`\1`",
             }
