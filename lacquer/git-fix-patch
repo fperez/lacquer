@@ -2,9 +2,12 @@
 """
 Fixes a bogus git patch.
 
-Sometimes a patch that people submit to sympy contains 2 bogus characters at
-the beginning, that cause "git am" to fail when applying it. The solution is to
-remove them, which is the purpose of this script.
+Sometimes a patch that people submit to sympy contains the UTF-8 byte-order
+mark (BOM), which are 3 characters at the beginning, that cause "git am" to
+fail when applying it. The solution is to remove them, which is the purpose of
+this script. See this link for more info:
+
+http://en.wikipedia.org/wiki/Byte-order_mark
 
 Usage:
 
@@ -12,7 +15,7 @@ Usage:
 
 you can also rewrite the original file with the fix (inplace) by:
 
-  latex2rst -s some.patch
+  git-fix-patch -s some.patch
 
 """
 
@@ -20,29 +23,6 @@ from textwrap import fill
 import os
 import re
 from optparse import OptionParser
-
-def repl1(obj):
-    eq = obj.group(1)
-    eq = eq.replace("\n", " ")
-    eq = fill(eq, 100000)
-    return "\n.. math::\n\n    %s\n" % eq
-def repl6(obj):
-    eq = obj.group(1)
-    eq = eq.replace("\n", " ")
-    eq = fill(eq, 100000)
-    return "\n.. math::\n    :nowrap:\n\n    %s\n" % eq
-def repl4(obj):
-    eq = obj.group(1)
-    label = obj.group(2)
-    eq = eq.replace("\n", " ")
-    eq = fill(eq, 100000)
-    return "\n.. math::\n    :label: %s\n\n    %s\n" % (label, eq)
-def repl2(obj):
-    title = obj.group(1)
-    return "%s\n%s\n" % (title, "="*len(title))
-def repl3(obj):
-    title = obj.group(1)
-    return "%s\n%s\n" % (title, "-"*len(title))
 
 def main():
     parser = OptionParser(usage="[options] args")
